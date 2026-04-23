@@ -41,15 +41,15 @@ ENV PORT=8000
 ENV NODE_ENV=production
 
 # Expose port
-EXPOSE 8000
+EXPOSE 10000
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8000/health || exit 1
+    CMD curl -f http://localhost:10000/health || exit 1
 
 # Change working directory to ai-core for module execution
 WORKDIR /app/ai-core
 
 # Start the application
-CMD ["gunicorn", "app.main:app", "-w", "2", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000", "--timeout", "300", "--keep-alive", "5"]
+CMD ["gunicorn", "app.main:app", "-w", "2", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:10000", "--timeout", "300"]
 
