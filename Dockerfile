@@ -10,11 +10,8 @@ RUN apt-get update && apt-get install -y openssl
 # Copy package files
 COPY package*.json ./
 
-# Install all dependencies with legacy peer deps
-RUN npm install --legacy-peer-deps
-
-# Install critical dependencies explicitly
-RUN npm install --legacy-peer-deps lucide-react next-auth clsx tailwind-merge
+# Install all dependencies with legacy peer deps and increased memory
+RUN NODE_OPTIONS="--max-old-space-size=2048" npm install --legacy-peer-deps
 
 # Copy source code
 COPY . .
