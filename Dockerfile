@@ -34,7 +34,7 @@ RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
 USER appuser
 
 # Environment variables
-ENV PYTHONPATH=/app
+ENV PYTHONPATH=/app/ai-core
 ENV PYTHONUNBUFFERED=1
 ENV HOST=0.0.0.0
 ENV PORT=8000
@@ -47,6 +47,9 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8000/health || exit 1
 
+# Change working directory to ai-core for module execution
+WORKDIR /app/ai-core
+
 # Start the application
-CMD ["gunicorn", "ai-core.app.main:app", "-w", "2", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000", "--timeout", "300", "--keep-alive", "5"]
+CMD ["gunicorn", "app.main:app", "-w", "2", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000", "--timeout", "300", "--keep-alive", "5"]
 
