@@ -44,7 +44,7 @@ interface Evidence {
 }
 
 export default function ArgumentBuilder() {
-  const [arguments, setArguments] = useState<Argument[]>([
+  const [argumentList, setArgumentList] = useState<Argument[]>([
     {
       id: '1',
       type: 'premise',

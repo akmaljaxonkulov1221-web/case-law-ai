@@ -52,8 +52,8 @@ transformers_cache/
 /coverage
 
 # next.js
-/.next/
-/out/
+# /.next/  # Commented out for local build strategy
+# /out/     # Commented out for local build strategy
 
 # production
 /build

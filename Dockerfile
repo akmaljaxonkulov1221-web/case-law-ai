@@ -1,38 +1,10 @@
-# Multi-stage build for Case-Law AI Platform
-FROM node:20-slim AS frontend-builder
+# Local Build Strategy for Case-Law AI Platform
+FROM python:3.11-slim
 
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies for Prisma and build tools
-RUN apt-get update && apt-get install -y \
-    openssl \
-    build-essential \
-    python3 \
-    && rm -rf /var/lib/apt/lists/*
-
-# Copy package files
-COPY package*.json ./
-COPY tsconfig.json ./
-COPY next.config.ts ./
-
-# Install all dependencies with legacy peer deps and increased memory
-RUN NODE_OPTIONS="--max-old-space-size=2048" npm install --legacy-peer-deps
-
-# Copy source code
-COPY src/ ./src/
-COPY public/ ./public/
-
-# Build the application
-RUN NODE_OPTIONS="--max-old-space-size=2048" npm run build
-
-# Backend stage
-FROM python:3.11-slim AS backend
-
-# Set working directory
-WORKDIR /app
-
-# Install system dependencies for AI libraries
+# Install system dependencies for AI libraries and curl
 RUN apt-get update && apt-get install -y \
     build-essential \
     gcc \
@@ -52,10 +24,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy backend application
 COPY ai-core/ ./ai-core/
 
-# Copy frontend build from builder stage
-COPY --from=frontend-builder /app/.next/standalone ./
-COPY --from=frontend-builder /app/.next/static ./.next/static
-COPY --from=frontend-builder /app/public ./public
+# Copy pre-built frontend files (from local build)
+COPY .next/standalone ./
+COPY .next/static ./.next/static
+COPY public ./public
 
 # Create non-root user
 RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
