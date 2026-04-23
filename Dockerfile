@@ -10,8 +10,11 @@ RUN apt-get update && apt-get install -y openssl
 # Copy package files
 COPY package*.json ./
 
-# Install all dependencies (including devDependencies for build)
-RUN npm ci
+# Install all dependencies with legacy peer deps
+RUN npm install --legacy-peer-deps
+
+# Install critical dependencies explicitly
+RUN npm install --legacy-peer-deps lucide-react next-auth clsx tailwind-merge
 
 # Copy source code
 COPY . .
