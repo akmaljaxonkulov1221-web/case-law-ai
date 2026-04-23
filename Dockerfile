@@ -4,20 +4,27 @@ FROM node:20-slim AS frontend-builder
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies for Prisma
-RUN apt-get update && apt-get install -y openssl
+# Install system dependencies for Prisma and build tools
+RUN apt-get update && apt-get install -y \
+    openssl \
+    build-essential \
+    python3 \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy package files
 COPY package*.json ./
+COPY tsconfig.json ./
+COPY next.config.ts ./
 
 # Install all dependencies with legacy peer deps and increased memory
 RUN NODE_OPTIONS="--max-old-space-size=2048" npm install --legacy-peer-deps
 
 # Copy source code
-COPY . .
+COPY src/ ./src/
+COPY public/ ./public/
 
 # Build the application
-RUN npm run build
+RUN NODE_OPTIONS="--max-old-space-size=2048" npm run build
 
 # Backend stage
 FROM python:3.11-slim AS backend
@@ -25,7 +32,7 @@ FROM python:3.11-slim AS backend
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies
+# Install system dependencies for AI libraries
 RUN apt-get update && apt-get install -y \
     build-essential \
     gcc \
@@ -41,9 +48,6 @@ RUN apt-get update && apt-get install -y \
 # Copy requirements and install Python dependencies
 COPY ai-core/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-
-# Install gunicorn for production
-RUN pip install gunicorn uvicorn
 
 # Copy backend application
 COPY ai-core/ ./ai-core/
@@ -62,6 +66,7 @@ ENV PYTHONPATH=/app
 ENV PYTHONUNBUFFERED=1
 ENV HOST=0.0.0.0
 ENV PORT=8000
+ENV NODE_ENV=production
 
 # Expose port
 EXPOSE 8000
