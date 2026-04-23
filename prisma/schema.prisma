@@ -1,0 +1,859 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// User Management
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  password      String
+  role          UserRole  @default(STUDENT)
+  avatar        String?
+  emailVerified DateTime?
+  
+  // Gamification
+  xp            Int       @default(0)
+  level         Int       @default(1)
+  streak        Int       @default(0)
+  totalCases    Int       @default(0)
+  winRate       Float     @default(0.0)
+  
+  // Subscription
+  subscription  Subscription?
+  subscriptionId String?  @unique
+  
+  // Timestamps
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  lastActiveAt  DateTime  @default(now())
+
+  // Relations
+  cases         Case[]
+  caseAttempts  CaseAttempt[]
+  achievements  UserAchievement[]
+  comments      Comment[]
+  forumPosts    ForumPost[]
+  enrolledCourses Enrollment[]
+  teacherCourses Course[]
+  notifications  Notification[]
+  activityLogs   ActivityLog[]
+  bookmarks      Bookmark[]
+  notes          Note[]
+  certificates   Certificate[]
+  payments       Payment[]
+  aiInteractions AIInteraction[]
+  debateParticipants DebateParticipant[]
+  testResults    TestResult[]
+  examResults    ExamResult[]
+  assignments    Assignment[]
+  submittedAssignments SubmittedAssignment[]
+
+  @@map("users")
+}
+
+model Subscription {
+  id          String           @id @default(cuid())
+  userId      String           @unique
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan        SubscriptionPlan @default(FREE)
+  status      SubscriptionStatus @default(ACTIVE)
+  startDate   DateTime         @default(now())
+  endDate     DateTime?
+  cancelledAt DateTime?
+  
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  
+  @@map("subscriptions")
+}
+
+// Legal Cases System
+model Case {
+  id              String      @id @default(cuid())
+  title           String
+  description     String
+  fullText        String      @db.Text
+  category        String
+  difficulty      Difficulty  @default(BEGINNER)
+  tags            String[]
+  
+  // Case metadata
+  jurisdiction    String
+  court           String?
+  date            DateTime?
+  caseNumber      String?
+  citation        String?
+  
+  // AI Analysis
+  aiAnalysis      Json?
+  keyIssues       String[]
+  relevantLaws    String[]
+  precedentValue  Float       @default(0.0)
+  
+  // Interactive elements
+  decisionTree    Json?
+  scenarios       Scenario[]
+  evidence        Evidence[]
+  
+  // Engagement
+  views           Int         @default(0)
+  attemptCount    Int         @default(0)
+  averageScore    Float       @default(0.0)
+  rating          Float       @default(0.0)
+  
+  // Status
+  status          CaseStatus  @default(DRAFT)
+  isPublic        Boolean     @default(true)
+  featured        Boolean     @default(false)
+  
+  createdBy       String
+  creator         User        @relation(fields: [createdBy], references: [id])
+  
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  
+  // Relations
+  attempts        CaseAttempt[]
+  comments        Comment[]
+  bookmarks       Bookmark[]
+  notes           Note[]
+  testQuestions   TestQuestion[]
+  
+  @@map("cases")
+}
+
+model Scenario {
+  id          String  @id @default(cuid())
+  caseId      String
+  case        Case    @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  title       String
+  description String
+  conditions  Json?
+  outcome     String?
+  order       Int
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("scenarios")
+}
+
+model Evidence {
+  id          String      @id @default(cuid())
+  caseId      String
+  case        Case        @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  title       String
+  description String
+  type        EvidenceType
+  credibility Float       @default(0.0)
+  relevance   Float       @default(0.0)
+  
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  @@map("evidence")
+}
+
+model CaseAttempt {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  caseId      String
+  case        Case      @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  
+  // Attempt data
+  userAnswer   Json?
+  correctAnswer Json?
+  score        Float
+  timeSpent    Int       // in seconds
+  steps        Json?     // step-by-step reasoning
+  
+  // AI Feedback
+  aiFeedback   Json?
+  weaknesses   String[]
+  strengths    String[]
+  
+  status       AttemptStatus @default(IN_PROGRESS)
+  
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  completedAt  DateTime?
+  
+  @@map("case_attempts")
+}
+
+// Learning & Testing System
+model Course {
+  id          String      @id @default(cuid())
+  title       String
+  description String
+  category    String
+  difficulty  Difficulty  @default(BEGINNER)
+  
+  // Course content
+  content     Json?
+  cases       String[]    // case IDs
+  materials   Json?
+  
+  // Metadata
+  duration    Int         // in hours
+  price       Float       @default(0.0)
+  isPublic    Boolean     @default(true)
+  
+  createdBy   String
+  teacher     User        @relation(fields: [createdBy], references: [id])
+  
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  // Relations
+  enrollments Enrollment[]
+  assignments Assignment[]
+  
+  @@map("courses")
+}
+
+model Enrollment {
+  id          String            @id @default(cuid())
+  userId      String
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId    String
+  course      Course            @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  
+  progress    Float             @default(0.0)
+  status      EnrollmentStatus  @default(ACTIVE)
+  startedAt   DateTime          @default(now())
+  completedAt DateTime?
+  
+  @@unique([userId, courseId])
+  @@map("enrollments")
+}
+
+model TestQuestion {
+  id          String      @id @default(cuid())
+  caseId      String?
+  case        Case?       @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  question    String
+  type        QuestionType
+  options     Json?
+  correctAnswer Json
+  explanation String?
+  difficulty  Difficulty  @default(BEGINNER)
+  points      Int         @default(1)
+  
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  // Relations
+  testResults TestResult[]
+  
+  @@map("test_questions")
+}
+
+model TestResult {
+  id              String      @id @default(cuid())
+  userId          String
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  questionId      String
+  question        TestQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  
+  userAnswer      Json
+  isCorrect       Boolean
+  timeSpent       Int         // in seconds
+  confidence      Float?      // user's confidence level
+  
+  createdAt       DateTime    @default(now())
+  
+  @@map("test_results")
+}
+
+model Exam {
+  id          String      @id @default(cuid())
+  title       String
+  description String
+  category    String
+  difficulty  Difficulty  @default(BEGINNER)
+  
+  // Exam settings
+  timeLimit   Int         // in minutes
+  questions   String[]    // question IDs
+  passingScore Float      @default(0.7)
+  
+  // Access control
+  isPublic    Boolean     @default(false)
+  startDate   DateTime?
+  endDate     DateTime?
+  
+  createdBy   String
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  // Relations
+  results     ExamResult[]
+  
+  @@map("exams")
+}
+
+model ExamResult {
+  id          String      @id @default(cuid())
+  userId      String
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  examId      String
+  exam        Exam        @relation(fields: [examId], references: [id], onDelete: Cascade)
+  
+  score       Float
+  totalPoints Int
+  timeSpent   Int         // in minutes
+  status      ExamStatus  @default(IN_PROGRESS)
+  
+  startedAt   DateTime    @default(now())
+  completedAt DateTime?
+  
+  @@map("exam_results")
+}
+
+// Gamification System
+model Achievement {
+  id          String @id @default(cuid())
+  title       String
+  description String
+  icon        String
+  category    String
+  points      Int    @default(0)
+  condition   Json   // unlock conditions
+  
+  createdAt   DateTime @default(now())
+  
+  // Relations
+  userAchievements UserAchievement[]
+  
+  @@map("achievements")
+}
+
+model UserAchievement {
+  id            String      @id @default(cuid())
+  userId        String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievementId String
+  achievement   Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+  
+  unlockedAt    DateTime    @default(now())
+  
+  @@unique([userId, achievementId])
+  @@map("user_achievements")
+}
+
+model Leaderboard {
+  id          String   @id @default(cuid())
+  period      String   // daily, weekly, monthly, all-time
+  category    String?
+  rankings    Json     // user rankings data
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("leaderboards")
+}
+
+// Community System
+model ForumPost {
+  id          String      @id @default(cuid())
+  title       String
+  content     String      @db.Text
+  category    String
+  tags        String[]
+  
+  createdBy   String
+  creator     User        @relation(fields: [createdBy], references: [id])
+  
+  views       Int         @default(0)
+  likes       Int         @default(0)
+  isPinned    Boolean     @default(false)
+  isLocked    Boolean     @default(false)
+  
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  // Relations
+  comments    Comment[]
+  
+  @@map("forum_posts")
+}
+
+model Comment {
+  id          String      @id @default(cuid())
+  content     String
+  postId      String?
+  post        ForumPost?  @relation(fields: [postId], references: [id], onDelete: Cascade)
+  caseId      String?
+  case        Case?       @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  
+  createdBy   String
+  creator     User        @relation(fields: [createdBy], references: [id])
+  
+  parentId    String?     // for nested comments
+  likes       Int         @default(0)
+  
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  @@map("comments")
+}
+
+// Legal System
+model Law {
+  id            String    @id @default(cuid())
+  uuid          String    @unique @default(cuid())
+  title         String
+  codeName      String
+  articleNumber String
+  fullText      String
+  summary       String
+  interpretation String
+  legalDomain   String
+  subcategory   String
+  tags          String[]
+  importanceLevel String   @default("medium")
+  difficultyLevel  String   @default("medium")
+  effectiveDate  DateTime
+  isCurrent      Boolean   @default(true)
+  
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  
+  // Relations
+  courtDecisions LawCourtDecision[]
+  legalTerms     LegalTerm[]
+  
+  @@map("laws")
+}
+
+model CourtDecision {
+  id              String    @id @default(cuid())
+  uuid            String    @unique @default(cuid())
+  title           String
+  description     String
+  caseNumber      String
+  courtName       String
+  decisionDate    DateTime
+  legalDomain     String
+  difficultyLevel String    @default("medium")
+  tags            String[]
+  facts           String
+  legalIssues     String[]
+  applicableLaws  String[]
+  decision        String
+  reasoning       String
+  precedentValue  String    @default("medium")
+  estimatedTime   Int       @default(30)
+  minXpRequired   Int       @default(50)
+  xpReward        Int       @default(100)
+  status          String    @default("active")
+  isFeatured      Boolean   @default(false)
+  
+  createdAt       DateTime  @default(now())
+  createdBy       String
+  
+  // Relations
+  laws            LawCourtDecision[]
+  
+  @@map("court_decisions")
+}
+
+model LawCourtDecision {
+  id            String    @id @default(cuid())
+  lawId         String
+  law           Law       @relation(fields: [lawId], references: [id], onDelete: Cascade)
+  courtDecisionId String
+  courtDecision CourtDecision @relation(fields: [courtDecisionId], references: [id], onDelete: Cascade)
+  
+  relevanceScore Float     @default(1.0)
+  context       String?
+  
+  createdAt     DateTime  @default(now())
+  
+  @@unique([lawId, courtDecisionId])
+  @@map("law_court_decisions")
+}
+
+model LegalTerm {
+  id            String    @id @default(cuid())
+  term          String    @unique
+  definition    String
+  explanation   String
+  category      String
+  synonyms      String[]
+  examples      String[]
+  relatedTerms  String[]
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // Relations
+  laws          Law[]
+  
+  @@map("legal_terms")
+}
+
+model LegalDictionary {
+  id            String    @id @default(cuid())
+  term          String    @unique
+  definition    String
+  explanation   String
+  category      String
+  synonyms      String[]
+  examples      String[]
+  relatedTerms  String[]
+  source        String?
+  lastUpdated   DateTime  @updatedAt @default(now())
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  @@map("legal_dictionary")
+}
+
+model DocumentTemplate {
+  id            String    @id @default(cuid())
+  name          String
+  type          String    // "complaint", "contract", "petition", etc.
+  description   String
+  template      String    // Template with placeholders like {{article_id}}, {{user_name}}
+  variables     Json      // Template variables and their descriptions
+  category      String
+  isPublic      Boolean   @default(true)
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  @@map("document_templates")
+}
+
+// AI System
+model AIInteraction {
+  id          String        @id @default(cuid())
+  userId      String
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type         AIInteractionType
+  
+  // Interaction data
+  input        Json
+  output       Json
+  context      Json?
+  
+  // AI metadata
+  model        String
+  tokensUsed   Int?
+  confidence   Float?
+  
+  createdAt    DateTime      @default(now())
+  
+  @@map("ai_interactions")
+}
+
+model Debate {
+  id          String      @id @default(cuid())
+  title       String
+  description String
+  topic       String
+  caseId      String?
+  
+  status      DebateStatus @default(ACTIVE)
+  
+  createdBy   String
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  // Relations
+  participants DebateParticipant[]
+  
+  @@map("debates")
+}
+
+model DebateParticipant {
+  id          String          @id @default(cuid())
+  debateId    String
+  debate      Debate          @relation(fields: [debateId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  position    DebatePosition
+  arguments   Json?
+  score       Float           @default(0.0)
+  
+  joinedAt    DateTime        @default(now())
+  
+  @@unique([debateId, userId])
+  @@map("debate_participants")
+}
+
+// Assignment System
+model Assignment {
+  id          String      @id @default(cuid())
+  title       String
+  description String
+  instructions String
+  courseId    String
+  course      Course      @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  
+  dueDate     DateTime?
+  maxScore    Float       @default(100.0)
+  
+  createdBy   String
+  creator     User        @relation(fields: [createdBy], references: [id])
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  // Relations
+  submissions SubmittedAssignment[]
+  
+  @@map("assignments")
+}
+
+model SubmittedAssignment {
+  id          String      @id @default(cuid())
+  assignmentId String
+  assignment  Assignment  @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  content     Json?
+  fileUrls    String[]
+  score       Float?
+  feedback    String?
+  
+  status      SubmissionStatus @default(SUBMITTED)
+  
+  submittedAt DateTime    @default(now())
+  gradedAt    DateTime?
+  
+  @@unique([assignmentId, userId])
+  @@map("submitted_assignments")
+}
+
+// User Personalization
+model Bookmark {
+  id          String      @id @default(cuid())
+  userId      String
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  caseId      String?
+  case        Case?       @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  postId      String?
+  
+  createdAt   DateTime    @default(now())
+  
+  @@map("bookmarks")
+}
+
+model Note {
+  id          String      @id @default(cuid())
+  userId      String
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  caseId      String?
+  case        Case?       @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  content     String
+  highlights  Json?
+  
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  @@map("notes")
+}
+
+// Notifications
+model Notification {
+  id          String              @id @default(cuid())
+  userId      String
+  user        User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  message     String
+  type        NotificationType
+  data        Json?
+  
+  isRead      Boolean             @default(false)
+  
+  createdAt   DateTime            @default(now())
+  
+  @@map("notifications")
+}
+
+// Analytics
+model ActivityLog {
+  id          String        @id @default(cuid())
+  userId      String
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  action      String
+  resource    String?
+  metadata    Json?
+  
+  ipAddress   String?
+  userAgent   String?
+  
+  createdAt   DateTime      @default(now())
+  
+  @@map("activity_logs")
+}
+
+// Monetization
+model Payment {
+  id          String        @id @default(cuid())
+  userId      String
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount      Float
+  currency    String        @default("USD")
+  status      PaymentStatus
+  
+  method      String?
+  transactionId String?
+  
+  createdAt   DateTime      @default(now())
+  
+  @@map("payments")
+}
+
+model Certificate {
+  id          String      @id @default(cuid())
+  userId      String
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  description String
+  courseId    String?
+  
+  issuedAt    DateTime    @default(now())
+  fileUrl     String?
+  
+  @@map("certificates")
+}
+
+// Enums
+enum UserRole {
+  STUDENT
+  TEACHER
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum SubscriptionPlan {
+  FREE
+  BASIC
+  PREMIUM
+  ENTERPRISE
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELLED
+  EXPIRED
+  SUSPENDED
+}
+
+enum Difficulty {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  EXPERT
+}
+
+enum CaseStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+  FEATURED
+}
+
+enum AttemptStatus {
+  IN_PROGRESS
+  COMPLETED
+  ABANDONED
+}
+
+enum EvidenceType {
+  DOCUMENT
+  TESTIMONY
+  PHOTOGRAPH
+  VIDEO
+  AUDIO
+  EXPERT_OPINION
+  OTHER
+}
+
+enum QuestionType {
+  MULTIPLE_CHOICE
+  TRUE_FALSE
+  SHORT_ANSWER
+  ESSAY
+  CASE_ANALYSIS
+}
+
+enum EnrollmentStatus {
+  ACTIVE
+  COMPLETED
+  DROPPED
+  SUSPENDED
+}
+
+enum ExamStatus {
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+  PASSED
+  EXPIRED
+}
+
+enum AIInteractionType {
+  CASE_ANALYSIS
+  CHAT_ASSISTANT
+  DEBATE_MODE
+  JUDGE_MODE
+  SUMMARIZER
+  RECOMMENDATION
+  WEAKNESS_DETECTOR
+  ARGUMENT_BUILDER
+  EVIDENCE_ANALYZER
+  LEGAL_WRITING
+}
+
+enum DebateStatus {
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum DebatePosition {
+  PROSECUTION
+  DEFENSE
+  NEUTRAL
+}
+
+enum SubmissionStatus {
+  DRAFT
+  SUBMITTED
+  GRADED
+  RETURNED
+}
+
+enum NotificationType {
+  SYSTEM
+  CASE_UPDATE
+  ACHIEVEMENT
+  ASSIGNMENT
+  DEBATE
+  COMMENT
+  PAYMENT
+  SUBSCRIPTION
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
