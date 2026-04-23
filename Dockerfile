@@ -1,8 +1,11 @@
 # Multi-stage build for Case-Law AI Platform
-FROM node:18-alpine AS frontend-builder
+FROM node:20-slim AS frontend-builder
 
 # Set working directory
 WORKDIR /app
+
+# Install system dependencies for Prisma
+RUN apt-get update && apt-get install -y openssl
 
 # Copy package files
 COPY package*.json ./
