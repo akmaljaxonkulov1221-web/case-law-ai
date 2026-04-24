@@ -4,7 +4,7 @@ Logging configuration for AI Core
 
 import logging
 import sys
-from ..core.config import settings
+from ai_core.app.core.config import settings
 
 def get_logger(name: str = __name__):
     """Get logger instance"""
