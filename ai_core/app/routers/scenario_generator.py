@@ -8,8 +8,8 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 from pydantic import BaseModel, Field
 
-from app.core.database import get_db
-from app.services.scenario_generator import ScenarioGenerator, ScenarioGeneration
+from ..core.database import get_db
+from ..services.scenario_generator import ScenarioGenerator, ScenarioGeneration
 
 router = APIRouter()
 
@@ -97,7 +97,7 @@ async def save_scenario(
     """Save scenario as what-if scenario"""
     try:
         # Create scenario option object
-        from app.services.scenario_generator import ScenarioOption
+        from ..services.scenario_generator import ScenarioOption
         
         scenario_option = ScenarioOption(
             option_letter=request.option_letter,
@@ -158,7 +158,7 @@ async def get_node_info(
 ):
     """Get decision tree node information"""
     try:
-        from app.models.models import DecisionTreeNode, DecisionTree, DecisionTreeEdge
+        from ..models.models import DecisionTreeNode, DecisionTree, DecisionTreeEdge
         
         # Get node with tree information
         node = db.query(DecisionTreeNode).filter(

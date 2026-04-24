@@ -10,12 +10,12 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 from dataclasses import dataclass
 
-from app.core.database import get_db
-from app.core.logging import get_logger
-from app.models.models import User, UserAchievement, ActivityLog, AIInteraction
-from app.services.gamification_service import gamification_service
-from app.services.weakness_detection_service import weakness_detection_service
-from app.services.notification_service import notification_service
+from ..core.database import get_db
+from ..core.logging import get_logger
+from ..models.models import User, UserAchievement, ActivityLog, AIInteraction
+from ..services.gamification_service import gamification_service
+from ..services.weakness_detection_service import weakness_detection_service
+from ..services.notification_service import notification_service
 
 logger = logging.getLogger(__name__)
 

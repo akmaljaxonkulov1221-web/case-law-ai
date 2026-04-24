@@ -8,8 +8,8 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 from pydantic import BaseModel, Field
 
-from app.core.database import get_db
-from app.services.weakness_detector import WeaknessDetector, WeaknessAnalysis
+from ..core.database import get_db
+from ..services.weakness_detector import WeaknessDetector, WeaknessAnalysis
 
 router = APIRouter()
 

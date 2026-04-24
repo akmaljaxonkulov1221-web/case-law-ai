@@ -8,8 +8,6 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-# Python PYTHONPATH sozlash
-ENV PYTHONPATH=/app
 ENV PYTHONUNBUFFERED=1
 
 # Fayllarni nusxalash

@@ -14,10 +14,10 @@ from chromadb.config import Settings
 import openai
 from openai import AsyncOpenAI
 
-from app.core.config import settings
-from app.core.database import get_db
-from app.models.models import Law, Case, CourtDecision, LawCourtDecision
-from app.services.cache_service import cache_service
+from ..core.config import settings
+from ..core.database import get_db
+from ..models.models import Law, Case, CourtDecision, LawCourtDecision
+from ..services.cache_service import cache_service
 
 logger = logging.getLogger(__name__)
 

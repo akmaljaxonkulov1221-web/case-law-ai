@@ -7,11 +7,11 @@ import asyncio
 import logging
 from typing import Dict, Any
 
-from app.core.config import settings
-from app.core.rag_service import RAGService
-from app.services.irac_solver import IRACSolverAgent
-from app.services.scenario_generator import ScenarioGenerator
-from app.services.weakness_detector import WeaknessDetector
+from ..core.config import settings
+from ..core.rag_service import RAGService
+from ..services.irac_solver import IRACSolverAgent
+from ..services.scenario_generator import ScenarioGenerator
+from ..services.weakness_detector import WeaknessDetector
 
 logger = logging.getLogger(__name__)
 
