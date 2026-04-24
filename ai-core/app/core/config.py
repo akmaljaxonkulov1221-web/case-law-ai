@@ -23,11 +23,7 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     
     # CORS
-    ALLOWED_ORIGINS: List[str] = [
-        "http://localhost:3000",
-        "http://localhost:3001",
-        "https://caselaw.ai"
-    ]
+    ALLOWED_ORIGINS: List[str] = ["*"]
     
     # OpenAI
     OPENAI_API_KEY: str = ""

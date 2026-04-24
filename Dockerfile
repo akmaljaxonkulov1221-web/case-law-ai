@@ -1,55 +1,25 @@
-# Local Build Strategy for Case-Law AI Platform
-FROM python:3.11-slim
+FROM python:3.11
 
-# Set working directory
-WORKDIR /app
-
-# Install system dependencies for AI libraries and curl
+# Tizim kutubxonalarini yangilash
 RUN apt-get update && apt-get install -y \
     build-essential \
-    gcc \
-    g++ \
-    curl \
-    wget \
-    git \
-    libffi-dev \
-    libssl-dev \
-    python3-dev \
+    libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements and install Python dependencies
-COPY ai-core/requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+WORKDIR /app
 
-# Copy backend application
-COPY ai-core/ ./ai-core/
-
-# Copy pre-built frontend files (from local build)
-COPY .next/standalone ./
-COPY .next/static ./.next/static
-COPY public ./public
-
-# Create non-root user
-RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
-USER appuser
-
-# Environment variables
+# Python PYTHONPATH sozlash
 ENV PYTHONPATH=/app/ai-core
 ENV PYTHONUNBUFFERED=1
-ENV HOST=0.0.0.0
-ENV PORT=8000
-ENV NODE_ENV=production
 
-# Expose port
-EXPOSE 10000
+# Fayllarni nusxalash
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:10000/health || exit 1
+COPY . .
 
-# Change working directory to ai-core for module execution
-WORKDIR /app/ai-core
+# Hugging Face standart porti
+EXPOSE 7860
 
-# Start the application
-CMD ["python", "-m", "gunicorn", "app.main:app", "-w", "1", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:10000", "--timeout", "600", "--keep-alive", "10"]
-
+# Gunicorn orqali ishga tushirish (ai-core.app.main:app yo'li bilan)
+CMD ["gunicorn", "ai-core.app.main:app", "-w", "1", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:7860", "--timeout", "600"]

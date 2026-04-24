@@ -7,13 +7,13 @@ import logging
 from typing import List, Optional
 import asyncio
 
-from app.core.config import settings
-from app.core.database import get_db, engine
-from app.core.logging import setup_logging
-from app.models import models
-from app.routers import irac_solver, scenario_generator, weakness_detection
-from app.services.ai_service import AIService
-from app.core.rag_service import RAGService
+from .core.config import settings
+from .core.database import get_db, engine
+from .core.logging import setup_logging
+from .models import models
+from .routers import irac_solver, scenario_generator, weakness_detection
+from .services.ai_service import AIService
+from .core.rag_service import RAGService
 
 # Logging setup
 setup_logging()

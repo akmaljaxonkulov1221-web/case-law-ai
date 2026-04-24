@@ -1,3 +1,12 @@
+---
+title: Case Law AI
+emoji: ⚖️
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+pinned: false
+---
+
 # Case-Law AI Platform 🏛️
 
 Interactive 3D Legal Education Platform powered by AI for Uzbekistan law students and professionals.
