@@ -8,9 +8,9 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 from pydantic import BaseModel, Field
 
-from ai_core.app.core.database import get_db
-from ai_core.app.services.irac_solver import IRACSolverAgent, IRACAnalysis
-from ai_core.app.core.rag_service import RAGService
+from core.database import get_db
+from services.irac_solver import IRACSolverAgent, IRACAnalysis
+from core.rag_service import RAGService
 
 router = APIRouter()
 
