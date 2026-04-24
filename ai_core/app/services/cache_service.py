@@ -12,8 +12,8 @@ from datetime import datetime, timedelta
 import redis.asyncio as redis
 from dataclasses import dataclass
 
-from app.core.config import settings
-from app.core.logging import get_logger
+from ..core.config import settings
+from ..core.logging import get_logger
 
 logger = logging.getLogger(__name__)
 

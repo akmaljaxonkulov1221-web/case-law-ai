@@ -8,11 +8,11 @@ from sqlalchemy.orm import Session
 from typing import List, Optional, Dict, Any
 from pydantic import BaseModel, Field
 
-from app.core.database import get_db
-from app.core.logging import get_logger
-from app.core.guardrails import guardrails
-from app.services.template_engine import template_engine
-from app.models.models import Law, DocumentTemplate
+from ..core.database import get_db
+from ..core.logging import get_logger
+from ..core.guardrails import guardrails
+from ..services.template_engine import template_engine
+from ..models.models import Law, DocumentTemplate
 
 logger = get_logger(__name__)
 

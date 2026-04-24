@@ -13,7 +13,7 @@ from fastapi import HTTPException, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
-from app.core.logging import get_logger
+from ..core.logging import get_logger
 
 logger = logging.getLogger(__name__)
 

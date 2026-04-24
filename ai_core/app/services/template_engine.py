@@ -10,9 +10,9 @@ from datetime import datetime
 from jinja2 import Template, Environment
 import re
 
-from app.core.database import get_db
-from app.core.logging import get_logger
-from app.models.models import Law, DocumentTemplate
+from ..core.database import get_db
+from ..core.logging import get_logger
+from ..models.models import Law, DocumentTemplate
 
 logger = logging.getLogger(__name__)
 

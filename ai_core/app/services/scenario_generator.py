@@ -11,9 +11,9 @@ import json
 import random
 from openai import AsyncOpenAI
 
-from app.core.config import settings
-from app.core.database import get_db
-from app.models.models import DecisionTreeNode, DecisionTree, DecisionTreeEdge, WhatIfScenario
+from ..core.config import settings
+from ..core.database import get_db
+from ..models.models import DecisionTreeNode, DecisionTree, DecisionTreeEdge, WhatIfScenario
 
 logger = logging.getLogger(__name__)
 

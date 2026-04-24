@@ -8,9 +8,9 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 from pydantic import BaseModel, Field
 
-from app.core.database import get_db
-from app.core.logging import get_logger
-from app.models.models import LegalDictionary
+from ..core.database import get_db
+from ..core.logging import get_logger
+from ..models.models import LegalDictionary
 
 logger = get_logger(__name__)
 

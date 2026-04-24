@@ -11,7 +11,7 @@ from typing import Dict, Any, Optional, List
 from dataclasses import dataclass
 from enum import Enum
 
-from app.core.config import settings
+from ..core.config import settings
 
 logger = logging.getLogger(__name__)
 

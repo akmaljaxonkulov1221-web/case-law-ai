@@ -13,9 +13,9 @@ from datetime import datetime, timedelta
 import re
 from openai import AsyncOpenAI
 
-from app.core.config import settings
-from app.core.database import get_db
-from app.models.models import IRACSession, WeaknessDetection, User
+from ..core.config import settings
+from ..core.database import get_db
+from ..models.models import IRACSession, WeaknessDetection, User
 
 logger = logging.getLogger(__name__)
 

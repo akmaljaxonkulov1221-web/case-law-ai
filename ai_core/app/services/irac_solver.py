@@ -11,11 +11,11 @@ import json
 import re
 from openai import AsyncOpenAI
 
-from app.core.config import settings
-from app.core.rag_service import RAGService
-from app.core.guardrails import guardrails, RetrievedDocument
-from app.core.database import get_db
-from app.models.models import IRACSession, Case, User
+from ..core.config import settings
+from ..core.rag_service import RAGService
+from ..core.guardrails import guardrails, RetrievedDocument
+from ..core.database import get_db
+from ..models.models import IRACSession, Case, User
 
 logger = logging.getLogger(__name__)
 
