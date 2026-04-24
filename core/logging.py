@@ -4,7 +4,7 @@ Logging configuration for AI Core
 
 import logging
 import sys
-from ai_core.app.core.config import settings
+from core.config import settings
 
 def get_logger(name: str = __name__):
     """Get logger instance"""
@@ -19,7 +19,7 @@ def setup_logging():
         format=settings.LOG_FORMAT,
         handlers=[
             logging.StreamHandler(sys.stdout),
-            logging.FileHandler("ai_core.log")
+            logging.FileHandler("app.log")
         ]
     )
     
