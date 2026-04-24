@@ -51,5 +51,5 @@ HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
 WORKDIR /app/ai-core
 
 # Start the application
-CMD ["gunicorn", "app.main:app", "-w", "1", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:10000", "--timeout", "600", "--keep-alive", "10"]
+CMD ["python", "-m", "gunicorn", "app.main:app", "-w", "1", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:10000", "--timeout", "600", "--keep-alive", "10"]
 

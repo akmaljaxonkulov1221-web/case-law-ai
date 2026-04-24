@@ -299,7 +299,7 @@ export default function DynamicDecisionTreeRenderer({
         const newNodes: Node[] = []
         const newEdges: Edge[] = []
         
-        result.generation.scenarios.forEach((scenario, index) => {
+        result.generation.scenarios.forEach((scenario: any, index: any) => {
           const childNodeId = `node-${actualNodeId}-${scenario.option_letter}`
           const yOffset = 200 + (index * 150)
           const xOffset = 200 + (index * 150)
@@ -366,7 +366,7 @@ export default function DynamicDecisionTreeRenderer({
 
   // Handle new connection
   const onConnect = useCallback(
-    (params: Connection) => addEdge(params, setEdges),
+    (params: Connection) => addEdge(params, setEdges as any),
     [setEdges]
   )
 

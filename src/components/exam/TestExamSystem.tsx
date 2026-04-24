@@ -264,7 +264,7 @@ export default function TestExamSystem() {
         pointsEarned = isCorrect ? question.points : 0
       } else if (question.type === 'SHORT_ANSWER') {
         isCorrect = typeof answer.answer === 'string' && 
-          answer.answer.toLowerCase().includes(question.correctAnswer?.toLowerCase() || '')
+          String(answer.answer).toLowerCase().includes(String(question.correctAnswer).toLowerCase())
         pointsEarned = isCorrect ? question.points : 0
       } else {
         // Essay and case analysis require manual grading

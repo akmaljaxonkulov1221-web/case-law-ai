@@ -35,7 +35,6 @@ import {
   Ban,
   ShieldCheck,
   KeyRound,
-  Password,
   UserX,
   UserPlus,
   AlertCircle,

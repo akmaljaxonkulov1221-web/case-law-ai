@@ -22,7 +22,7 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
+# lib/  # Commented out - needed for src/lib/utils.ts
 lib64/
 parts/
 sdist/

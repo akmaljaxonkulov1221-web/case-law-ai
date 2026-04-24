@@ -128,30 +128,30 @@ export default function ArgumentBuilder() {
         sources: [],
         status: 'draft'
       }
-      setArguments([...arguments, newArg])
+      setArgumentList([...argumentList, newArg])
       setNewArgument('')
     }
   }
 
   const deleteArgument = (id: string) => {
-    setArguments(arguments.filter(arg => arg.id !== id))
+    setArgumentList(argumentList.filter(arg => arg.id !== id))
   }
 
   const updateArgumentStatus = (id: string, status: 'draft' | 'reviewed' | 'approved') => {
-    setArguments(arguments.map(arg => 
+    setArgumentList(argumentList.map(arg => 
       arg.id === id ? { ...arg, status } : arg
     ))
   }
 
   const analyzeArguments = () => {
-    const totalStrength = arguments.reduce((sum, arg) => sum + arg.strength, 0) / arguments.length
-    const approvedCount = arguments.filter(arg => arg.status === 'approved').length
+    const totalStrength = argumentList.reduce((sum, arg) => sum + arg.strength, 0) / argumentList.length
+    const approvedCount = argumentList.filter(arg => arg.status === 'approved').length
     
     setAnalysisResult({
       overallStrength: totalStrength,
-      completeness: (approvedCount / arguments.length) * 100,
-      argumentCount: arguments.length,
-      evidenceCount: arguments.filter(arg => arg.type === 'evidence').length,
+      completeness: (approvedCount / argumentList.length) * 100,
+      argumentCount: argumentList.length,
+      evidenceCount: argumentList.filter(arg => arg.type === 'evidence').length,
       recommendations: [
         'Gipotezalarni kuchaytirish uchun qo\'shimcha dalillar keltiring',
         'Xulosani kuchliroq dalillar bilan mustahkamlang',
@@ -225,7 +225,7 @@ export default function ArgumentBuilder() {
           <div className="space-y-3">
             <h3 className="font-medium text-gray-900">Mantiqiy argumentlar</h3>
             <div className="space-y-2 max-h-96 overflow-y-auto">
-              {arguments.map(argument => {
+              {argumentList.map((argument: Argument) => {
                 const TypeIcon = argumentTypes.find(t => t.value === argument.type)?.icon || MessageSquare
                 return (
                   <div key={argument.id} className="p-3 bg-gray-50 rounded-lg">

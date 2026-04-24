@@ -72,7 +72,7 @@ export default function FullIntegratedDashboard() {
   const handleLevelUp = (levelData: any) => {
     console.log('Level up:', levelData)
     // Update user data
-    setUserData(prev => prev ? {
+    setUserData((prev: any) => prev ? {
       ...prev,
       level: levelData.new_level,
       xp_points: levelData.xp_points
@@ -83,7 +83,7 @@ export default function FullIntegratedDashboard() {
   const handleStreakUpdate = (streakData: any) => {
     console.log('Streak update:', streakData)
     // Update user data
-    setUserData(prev => prev ? {
+    setUserData((prev: any) => prev ? {
       ...prev,
       current_streak: streakData.current_streak,
       longest_streak: streakData.longest_streak
@@ -94,7 +94,7 @@ export default function FullIntegratedDashboard() {
   const handleIRACAnalysisComplete = (analysis: any) => {
     console.log('IRAC analysis complete:', analysis)
     // Update user stats
-    setUserData(prev => prev ? {
+    setUserData((prev: any) => prev ? {
       ...prev,
       total_cases_solved: prev.total_cases_solved + 1,
       xp_points: prev.xp_points + 50 // Add XP for completing analysis
@@ -105,7 +105,7 @@ export default function FullIntegratedDashboard() {
   const handleScenarioSelect = (scenario: any) => {
     console.log('Scenario selected:', scenario)
     // Add XP for scenario exploration
-    setUserData(prev => prev ? {
+    setUserData((prev: any) => prev ? {
       ...prev,
       xp_points: prev.xp_points + 25
     } : null)

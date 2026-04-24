@@ -32,6 +32,8 @@ import {
   Globe,
   Database,
   Server,
+  Home,
+  ShieldCheck,
   Cloud,
   Lock,
   Unlock,

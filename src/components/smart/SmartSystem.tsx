@@ -271,7 +271,7 @@ export default function SmartSystem() {
   }
 
   const applyRecommendation = (recommendationId: string) => {
-    setSmartRecommendations(recommendations.filter(r => r.id !== recommendationId))
+    setSmartRecommendations(prev => prev.filter((r: any) => r.id !== recommendationId))
   }
 
   const getContentTypeIcon = (type: string) => {

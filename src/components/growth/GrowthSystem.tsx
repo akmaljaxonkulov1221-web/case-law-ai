@@ -32,15 +32,11 @@ import {
   Download,
   Upload,
   Mail,
-  Smartphone,
+  Plus,
   Globe,
-  Facebook,
-  Twitter,
-  Linkedin,
-  Instagram,
-  Youtube,
-  Telegram,
-  Whatsapp
+  Camera,
+  Play,
+  Send
 } from 'lucide-react'
 
 interface ReferralProgram {
@@ -284,13 +280,13 @@ export default function GrowthSystem() {
   ]
 
   const socialPlatforms = [
-    { name: 'Facebook', icon: Facebook, color: 'bg-blue-600' },
-    { name: 'Twitter', icon: Twitter, color: 'bg-sky-500' },
-    { name: 'LinkedIn', icon: Linkedin, color: 'bg-blue-700' },
-    { name: 'Instagram', icon: Instagram, color: 'bg-pink-600' },
-    { name: 'YouTube', icon: Youtube, color: 'bg-red-600' },
-    { name: 'Telegram', icon: Telegram, color: 'bg-blue-400' },
-    { name: 'WhatsApp', icon: Whatsapp, color: 'bg-green-500' }
+    { name: 'Facebook', icon: Globe, color: 'bg-blue-600' },
+    { name: 'Twitter', icon: Mail, color: 'bg-sky-500' },
+    { name: 'LinkedIn', icon: Users, color: 'bg-blue-700' },
+    { name: 'Instagram', icon: Camera, color: 'bg-pink-600' },
+    { name: 'YouTube', icon: Play, color: 'bg-red-600' },
+    { name: 'Telegram', icon: Send, color: 'bg-blue-400' },
+    { name: 'WhatsApp', icon: Mail, color: 'bg-green-500' }
   ]
 
   const formatCurrency = (amount: number, currency: string = 'UZS') => {
