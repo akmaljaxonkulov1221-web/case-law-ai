@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 # Python PYTHONPATH sozlash
-ENV PYTHONPATH=/app/ai-core
+ENV PYTHONPATH=/app/ai_core
 ENV PYTHONUNBUFFERED=1
 
 # Fayllarni nusxalash
@@ -21,5 +21,5 @@ COPY . .
 # Hugging Face standart porti
 EXPOSE 7860
 
-# Gunicorn orqali ishga tushirish (ai-core.app.main:app yo'li bilan)
-CMD ["gunicorn", "ai-core.app.main:app", "-w", "1", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:7860", "--timeout", "600"]
+# Gunicorn orqali ishga tushirish (ai_core.app.main:app yo'li bilan)
+CMD ["gunicorn", "ai_core.app.main:app", "-w", "1", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:7860", "--timeout", "600"]
